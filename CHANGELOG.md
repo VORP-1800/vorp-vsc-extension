@@ -1,5 +1,8 @@
 # Change Log
 
+## [0.1.0]
+- added missing character and user getters and setters
+
 ## [0.0.9]
 - fixed getItemCount
 - added new exports `getUserAmmo` `openePlayerInventory`
