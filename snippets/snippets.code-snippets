@@ -163,9 +163,9 @@
 	 },
 	 "GET USER OBJECT BY CHARID (server)": {
 		"scope": "lua",
-		"prefix": "user object",
+		"prefix": "user object by charid",
 		"body": [
-			"user = Core.getUser(${3:charid})",
+			"user = Core.getUserByCharId(${3:charid})",
 			"$0"
 		],
 		"description": " get User object by charid only returns if user is online"
@@ -174,7 +174,7 @@
 	 	"scope": "lua",
 	 	"prefix": "user group",
 	 	"body": [
-	 		"user_${1|group,hours|} = user.${2|getGroup,hours|}",
+	 		"user_${1|group,source,maxjobsallowed|} = user.${2|getGroup,source,maxJobsAllowed|}",
 	 		"$0"
 	 	],
 	 	"description": "get user group from users database table"
@@ -184,7 +184,11 @@
 		"scope": "lua",
 		"prefix": "character object",
 		"body": [
-		"character = Core.getUser(${3:_source}).getUsedCharacter",
+		"local user = Core.getUser(${3:_source})",
+		"if not user then",
+		"   return  ",
+		"end",
+		"local character = user.getUsedCharacter",
 		 "$0"
 		],
 		"description": " get character object, check if user exists first"
@@ -193,7 +197,7 @@
 	"GET CHARACTER DATA (server)": {
 		"scope": "lua",
 		"prefix": "character DATA",
-		"body": ["char_${1|identifier,charid,job,grade,group,name,age,gender,nickname,charDescription,coords,isDead,gold,rol,xp,money,skin,comps|} = character.${2|identifier,charIdentifier,job,jobGrade,group,firstname ..' '.. character.lastname,age,gender,nickname,charDescription,coords,isDead,gold,rol,xp,money,skin,comps|}",
+		"body": ["char_${1|identifier,charid,job,grade,group,name,age,gender,nickname,charDescription,coords,isDead,gold,rol,xp,money,skin,comps|} = character.${2|identifier,charIdentifier,job,jobGrade,group,firstname ..' '.. character.lastname,age,gender,nickname,charDescription,coords,isDead,gold,rol,xp,money,skin,comps,invCapacity|}",
 			"$0"],
 		"description": " get character data "
 	},
@@ -201,7 +205,7 @@
 		"scope": "lua",
 		"prefix": "character FUNCTIONS",
 		"body": [
-			"character.${1|setJob(,setJobGrade(,setGroup(,setAge(,setGender(,setCharDescription(,setNickName(,addCurrency(,removeCurrency(,addXp(,removeXp(,updateComps(json.encode(,updateSkin(json.encode(,setFirstname(,setLastname(,setRol(,removeRol(|}$2)$3",
+			"character.${1|setJob(,setJobGrade(,setGroup(,setAge(,setGender(,setCharDescription(,setNickName(,addCurrency(,removeCurrency(,addXp(,removeXp(,updateComps(json.encode(,updateSkin(json.encode(,setFirstname(,setLastname(,setRol(,removeRol(,updateInvCapacity(|}$2)$3",
 			"$0"
 		],
 		"description": "set character data "
@@ -294,7 +298,7 @@
 			"   local _source = data.source",
 			"   local item = data.item",
 			"   local label = data.label",
-			"end)"
+			"end,GetCurrentResourceName())"
 		],
 		"description": "register usable item "
 	},
@@ -343,49 +347,7 @@
 		],
 		"description": "does item exist "
 	},
-	"getItemByName ASYNC (server)": {
-		"scope": "lua",
-		"prefix": "inventory getItemByName ASYNC",
-		"body": [
-			"exports.vorp_inventory:getItemByName(${1|source|}, \"${2|item|}\", function(result)",
-		    " print(result)",
-			"end)",
-			"$0"
-		],
-		"description": "get item by name "
-	},
 
-	"getItemByName SYNC(server)": {
-		"scope": "lua",
-		"prefix": "inventory getItemByName SYNC",
-		"body": [
-			" item = exports.vorp_inventory:getItemByName(${1|source|}, \"${2|item|}\")",
-			"$0"
-		],
-		"description": "get item by name  "
-	},
-    "getItemContainingMetadata ASYNC(server)": {
-		"scope": "lua",
-		"prefix": "inventory getItemContainingMetadata ASYNC",
-		"body": [
-			"exports.vorp_inventory:getItemContainingMetadata(${1|source|}, \"${2|item|}\", ${3|metadata|}, function(result)",
-		    " print(result)",
-			"end)",
-			"$0"
-		],
-		"description": "get item by name "
-	},
-	"getItemMatchingMetadata SYNC(server)": {
-		"scope": "lua",
-		"prefix": "inventory getItemMatchingMetadata SYNC",
-		"body": [
-			"exports.vorp_inventory:getItemMatchingMetadata(${1|source|}, \"${2|item|}\", ${3|metadata|}, function(result)",
-		    " print(result)",
-			"end)",
-			"$0"
-		],
-		"description": "get item by name  "
-	},
 	"addItem ASYNC(server)": {
 		"scope": "lua",
 		"prefix": "inventory addItem ASYNC",
@@ -428,22 +390,22 @@
 		"description": "get item by main id  "
 	},
 
-	"subItemID ASYNC(server)": {
+	"subItemById ASYNC(server)": {
 		"scope": "lua",
-		"prefix": "inventory subItemID ASYNC",
+		"prefix": "inventory subItemById ASYNC",
 		"body": [
-			"exports.vorp_inventory:subItemID(${1|source|}, ${2|id|}, function(result)",
+			"exports.vorp_inventory:subItemById(${1|source|}, ${2|id|}, function(result)",
 		    "  print(result)",
 			"end)",
 			"$0"
 		],
 		"description": "sub item by id "
 	},
-	"subItemID SYNC(server)": {
+	"subItemById SYNC(server)": {
 		"scope": "lua",
-		"prefix": "inventory subItemID SYNC",
+		"prefix": "inventory subItemById SYNC",
 		"body": [
-			"exports.vorp_inventory:subItemID(${1|source|}, ${2|id|})",
+			"exports.vorp_inventory:subItemById(${1|source|}, ${2|id|})",
 			"$0"
 		],
 		"description": "sub item by id  "
@@ -473,7 +435,7 @@
 		"scope": "lua",
 		"prefix": "inventory setItemMetadata ASYNC",
 		"body": [
-			"exports.vorp_inventory:setItemMetadata(${1|source|}, ${2|itemId|}, ${3|metadata|}, ${4|amount|}, function(result)",
+			"exports.vorp_inventory:setItemMetadata(${1|source|}, ${2|itemId|}, ${3|metadata|}, ${4|nil,amount|}, function(result)",
 		    "  print(result)",
 			"end)",
 			"$0"
@@ -484,7 +446,7 @@
 		"scope": "lua",
 		"prefix": "inventory setItemMetadata SYNC",
 		"body": [
-			"exports.vorp_inventory:setItemMetadata(${1|source|}, ${2|itemId|}, ${3|metadata|}, ${4|amount|})",
+			"exports.vorp_inventory:setItemMetadata(${1|source|}, ${2|itemId|}, ${3|metadata|}, ${4|nil,amount|})",
 			"$0"
 		],
 		"description": "set item metadata  "
@@ -767,7 +729,7 @@
 		"scope": "lua",
 		"prefix": "inventory registerInventory",
 		"body": [
-			"exports.vorp_inventory:registerInventory({ id = \"${1|invId|}\", name = \"${2|name|}\", limit = ${3|limit|}, acceptWeapons = ${4|true|}, shared = ${5|false|}, ignoreItemStackLimit = ${6|false|}, whitelistItems = ${7|false|}, UsePermissions = ${8|false|}, UseBlackList = ${9|false|}, whitelistWeapons = ${10|false|} })",
+			"exports.vorp_inventory:registerInventory({ id = \"${1|invId|}\", name = \"${2|name|}\", limit = ${3|limit|}, acceptWeapons = ${4|true|}, shared = ${5|false|}, ignoreItemStackLimit = ${6|false|}, whitelistItems = ${7|false|}, UsePermissions = ${8|false|}, UseBlackList = ${9|false|}, whitelistWeapons = ${10|false|}, webhook = ${11|nil,webhooklink|}})",
 			"$0"
 		],
 		"description": "register inventory, it uses a table "
@@ -903,7 +865,7 @@
 		"prefix": "statebag getCharacter",
 		"body": [
 			"local character = LocalPlayer.state.Character",
-			"print(character.${1|FirstName,LastName,Job,JobLabel,Grade,Group,Age,Gender,CharDescription,Money,Gold|})",
+			"print(character.${1|FirstName,LastName,Job,JobLabel,Grade,Group,Age,Gender,Money,Gold|})",
 			"$0"
 		],
 		"description": "get character statebag use this only for light perms or visual purposes"
